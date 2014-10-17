@@ -1,10 +1,10 @@
 {
   "name": "zero-statics",
   "version": "0.0.1",
-  "description" : "zero module",
-  "zero" : {
-    "dependencies" : {
-    }
+  "description": "zero module",
+  "zero": {
+    "dependencies": {},
+    "name": "statics"
   },
-  "author" : "jiamiu"
+  "author": "jiamiu"
 }
