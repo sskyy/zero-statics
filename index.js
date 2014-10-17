@@ -1,60 +1,30 @@
-var config = require('./config')
+var _ = require("lodash")
 
-
-var userModule = {
-  models : require('./models'),
-  listen : require('./listen')(config),
-  //this will allow app global config overwrite
-  config : config,
-  route : {
-    "/user/count" : function( req, res, next){
-      userModule.dep.model.models['user'].count().then(function(total){
-        res.json({count:total})
+/**
+ * 如果某一依赖次某块的上层模块声明了statics属性，那么则为其提供静态文件服务。
+ * @module statics
+ *
+ */
+module.exports = {
+  /**
+   * 扩展声明了 statics 属性的模块。
+   * @param module
+   * @example
+   * //module expand on statics example
+   * {
+   *  deps : ['statics'],
+   *  statics : {
+   *   '/URL' : 'FILE_PATH'
+   *  }
+   * }
+   */
+  expand : function( module ){
+    var root = this
+    if( module.statics ){
+      _.forEach( module.statics, function( path, prefix){
+        ZERO.mlog("statics", "expand:", prefix, path)
+        APP.use( prefix, APP.express.static( path) )
       })
-    },
-    "*" : {
-      "function" : function initSession(req,res,next){
-        //TODO only for dev
-        if( !req.session.user ){
-          userModule.dep.model.models['user'].count().then(function(total){
-            var skip = parseInt( total * Math.random())
-            userModule.dep.model.models['user'].find({limit:1,skip:skip}).then(function(users){
-//              console.log("====================setting session user===========", users[0].name)
-//              req.session.user = users[0]
-              next()
-            }).catch(function(err){
-              ZERO.error(err)
-              next()
-            })
-          })
-        }else{
-          next()
-        }
-
-
-
-
-        return
-
-//        if( req.session.user ){
-//          next()
-//        }else{
-//          //TODO only for dev
-//          userModule.dep.model.models['user'].find({limit:1}).then(function(users){
-//            req.session.user = users[0]
-//            next()
-//          }).catch(function(err){
-//            ZERO.error(err)
-//            next()
-//          })
-//        }
-
-      },
-      "order" : {first:true}
     }
-
   }
 }
-
-module.exports = userModule
-
