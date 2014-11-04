@@ -1,4 +1,5 @@
-var _ = require("lodash")
+var _ = require("lodash"),
+  path = require('path')
 
 /**
  * 如果某一依赖次某块的上层模块声明了statics属性，那么则为其提供静态文件服务。
@@ -21,9 +22,9 @@ module.exports = {
   expand : function( module ){
     var root = this
     if( module.statics ){
-      _.forEach( module.statics, function( path, prefix){
-        ZERO.mlog("statics", "expand:", prefix, path)
-        APP.use( prefix, APP.express.static( path) )
+      _.forEach( module.statics, function( filePath, prefix){
+        ZERO.mlog("statics", "expand:", prefix, filePath)
+        APP.use( prefix, APP.express.static( path.join(process.cwd(),"modules",module.name, filePath) ))
       })
     }
   }
