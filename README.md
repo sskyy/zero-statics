@@ -1,6 +1,6 @@
 # zero-statics #
 
-This module let you use express' static middleware.
+Provide express' static middleware function.
 
 ## Usage ##
 
